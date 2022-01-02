@@ -68,6 +68,11 @@ serve(async (req) => {
         const data: KofiEvent = JSON.parse(form.get("data")!.toString());
 
         if (data.verification_token !== KOFI_TOKEN) {
+          console.log(
+            `[INFO] Someone made unauthorized request! ${
+              JSON.stringify(data, null, 2)
+            }`,
+          );
           return new Response("Unauthorized");
         }
 
@@ -75,6 +80,7 @@ serve(async (req) => {
           content: JSON.stringify(data),
         });
 
+        console.log("[INFO] Delivered hook!");
         return new Response("Delivered!");
       } catch (e) {
         return new Response("400 Bad Request", { status: 400 });
