@@ -70,8 +70,8 @@ serve(async (req) => {
         const data: KofiEvent = JSON.parse(form.get("data")!.toString());
 
         if (
-          data.verification_token !== KOFI_TOKEN ||
-          (DEBUG &&
+          data.verification_token !== KOFI_TOKEN &&
+          !(DEBUG &&
             data.verification_token === "123e4567-e89b-12d3-a456-426614174000")
         ) {
           console.log(
