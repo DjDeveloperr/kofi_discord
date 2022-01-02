@@ -81,7 +81,68 @@ serve(async (req) => {
         }
 
         await callWebhook({
-          content: JSON.stringify(data),
+          embeds: [
+            {
+              color: 0xF7EEE0,
+              author: {
+                name: `${data.is_public ? "" : "(Private) "}${data.from_name}`,
+              },
+              title: data.type === "Donation"
+                ? "Someone bought you a coffee!"
+                : data.type === "Commission"
+                ? "You got a commission!"
+                : data.type === "Subscription"
+                ? (data.is_first_subscription_payment
+                  ? "Someone subscribed to your Ko-fi!"
+                  : "Subscription Payment")
+                : data.type === "Shop Order"
+                ? "Someone made an order!"
+                : "Unknown Event",
+              url: data.url,
+              fields: [
+                ...(data.message
+                  ? [
+                    {
+                      name: "Message",
+                      value: data.message,
+                    },
+                  ]
+                  : []),
+                {
+                  name: "Amount",
+                  value: data.amount,
+                  inline: true,
+                },
+                {
+                  name: "Currency",
+                  value: data.currency,
+                  inline: true,
+                },
+                ...(data.shop_items?.length !== 0
+                  ? [
+                    {
+                      name: "Shop Items",
+                      value: `${data.shop_items?.length} items`,
+                      inline: true,
+                    },
+                  ]
+                  : []),
+                ...(data.tier_name
+                  ? [
+                    {
+                      name: "Tier",
+                      value: data.tier_name,
+                      inline: true,
+                    },
+                  ]
+                  : []),
+              ],
+              timestamp: data.timestamp,
+              footer: {
+                text: data.kofi_transaction_id,
+              },
+            },
+          ],
         });
 
         console.log("[INFO] Delivered hook!");
