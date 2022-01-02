@@ -118,11 +118,13 @@ serve(async (req) => {
                   value: data.currency,
                   inline: true,
                 },
-                ...(data.shop_items?.length
+                ...(data.shop_items
                   ? [
                     {
                       name: "Shop Items",
-                      value: `${data.shop_items?.length} items`,
+                      value: `${data.shop_items?.length} item${
+                        data.shop_items.length === 1 ? "" : "s"
+                      }`,
                       inline: true,
                     },
                   ]
