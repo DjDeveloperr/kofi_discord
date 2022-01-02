@@ -14,6 +14,8 @@ if (KOFI_TOKEN === undefined) {
   );
 }
 
+const DEBUG = Deno.env.get("DEBUG") === "1";
+
 async function callWebhook(data: Record<string, any>) {
   await fetch(DISCORD_WEBHOOK!, {
     method: "POST",
@@ -67,11 +69,13 @@ serve(async (req) => {
         const form = await req.formData();
         const data: KofiEvent = JSON.parse(form.get("data")!.toString());
 
-        if (data.verification_token !== KOFI_TOKEN) {
+        if (
+          data.verification_token !== KOFI_TOKEN ||
+          (DEBUG &&
+            data.verification_token === "123e4567-e89b-12d3-a456-426614174000")
+        ) {
           console.log(
-            `[INFO] Someone made unauthorized request! ${
-              JSON.stringify(data, null, 2)
-            }`,
+            `[INFO] Someone made unauthorized request! Verification Token: ${data.verification_token}, Name: ${data.from_name}`,
           );
           return new Response("Unauthorized");
         }
